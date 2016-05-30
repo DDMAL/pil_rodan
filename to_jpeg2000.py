@@ -66,7 +66,7 @@ class to_jpeg2000(RodanTask):
                                    "ORGtparts=R",
                                    "-rate", "-,1,0.5,0.25"])
 
-            shutil.copyfile(output_file, outputs['JPEG2000'][0]['resource_path'])
+            shutil.copyfile(output_file, outputs['JPEG2000 Image'][0]['resource_path'])
 
     def test_my_task(self, testcase):
         inputs = {

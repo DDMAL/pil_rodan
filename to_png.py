@@ -20,7 +20,7 @@ class to_png(RodanTask):
 
     def run_my_task(self, inputs, settings, outputs):
         infile = inputs['Image'][0]['resource_path']
-        outfile = outputs['out'][0]['resource_path']
+        outfile = outputs['RGB PNG Image'][0]['resource_path']
 
         image = PIL.Image.open(infile).convert('RGB')
         image.save(outfile, 'RGB PNG Image')
