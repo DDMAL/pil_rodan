@@ -14,5 +14,5 @@
   extension: png
   description: Greyscale PNG image
 - mimetype: image/grey16+png
-  description: Greyscale-16 PNG image
+  description: Greyscale 16 PNG image
   extension: png
