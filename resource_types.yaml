@@ -9,7 +9,7 @@
   extension: tiff
 - mimetype: image/onebit+png
   extension: png
-  description: One-bit PNG image
+  description: One-bit (black and white) PNG image
 - mimetype: image/greyscale+png
   extension: png
   description: Greyscale PNG image
