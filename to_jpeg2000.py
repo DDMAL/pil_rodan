@@ -76,7 +76,7 @@ class to_jpeg2000(RodanTask):
                  }
             ]
         }
-        PIL.Image.new("RGBA", size=(50, 50), color=(256, 0, 0)).save(inputs['in'][0]['resource_path'], 'JPEG')
+        PIL.Image.new("RGB", size=(50, 50), color=(256, 0, 0)).save(inputs['in'][0]['resource_path'], 'JPEG')
         outputs = {
             'out': [
                 {'resource_type': 'image/jp2',
