@@ -6,7 +6,9 @@ class to_png(RodanTask):
     name = 'PNG (RGB)'
     author = 'Andrew Hankinson'
     description = 'Convert image to png format'
-    settings = {}
+    settings = {
+        'job_queue': 'Python2'
+    }
     enabled = True
     category = "PIL - Conversion"
     interactive = False

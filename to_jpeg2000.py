@@ -20,7 +20,9 @@ class to_jpeg2000(RodanTask):
     name = 'JPEG2000'
     author = 'Andrew Hankinson'
     description = "Converts an image to a JPEG2000 image suitable for display in Diva"
-    settings = {}
+    settings = {
+        'job_queue': 'celery'
+    }
     enabled = True
     category = "PIL - Conversion"
     interactive = False

@@ -5,7 +5,9 @@ class RedFilter(RodanTask):
     name = "Red filtering"
     author = "Rivu Khoda & Yihong Luo"
     description = "Filters a spectrum of red color from image" 
-    settings = {} 
+    settings = {
+        'job_queue': 'Python2'
+    }
     enabled = True
     category = "PIL - Filter"
     interactive = False

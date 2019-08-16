@@ -6,7 +6,9 @@ class to_tiff(RodanTask):
     name = 'TIFF'
     author = 'Ling-Xiao Yang'
     description = 'Convert image to tiff format'
-    settings = {}
+    settings = {
+        'job_queue': 'Python2'
+    }
     enabled = True
     category = "PIL - Conversion"
     interactive = False
