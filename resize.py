@@ -1,9 +1,13 @@
+from celery.utils.log import get_task_logger
 from PIL import Image
 from rodan.jobs.base import RodanTask
 
 
-IDEAL_SSH_PX = 64   # SSH from old Salzinnes images
+IDEAL_SSH_PX = 64.   # SSH from old Salzinnes images
 Image.MAX_IMAGE_PIXELS = 1000000000 # We have to deal with very large images, but keep some decompression bomb protection
+
+
+logger = get_task_logger(__name__)
 
 
 class resize(RodanTask):
@@ -37,7 +41,8 @@ class resize(RodanTask):
         {'name': 'Image', 'minimum': 1, 'maximum': 1, 'resource_types': lambda mime: mime.startswith('image/')}
     ]
     output_port_types = [
-        {'name': 'Resized PNG Image', 'minimum': 1, 'maximum': 1, 'resource_types': ['image/rgb+png']}
+        {'name': 'Resized PNG Image', 'minimum': 1, 'maximum': 1, 'resource_types': ['image/rgb+png']},
+        {'name': 'Inverse Scale Ratio', 'minimum': 0, 'maximum': 1, 'resource_types': ['text/plain']},
     ]
 
     def run_my_task(self, inputs, settings, outputs):
@@ -45,16 +50,24 @@ class resize(RodanTask):
         outfile = outputs['Resized PNG Image'][0]['resource_path']
 
         image = Image.open(infile)
-        if settings['Action'] != 'Ratio':
-            ratio = IDEAL_SSH_PX / settings['Scale Value']
+        logger.info(settings['Action'])
+        if self.settings['properties']['Action']['enum'][settings['Action']] != 'Ratio':
+            ratio = IDEAL_SSH_PX / float(settings['Scale Value'])
         else:
             ratio = settings['Scale Value']
+
+        logger.info("Resize to {}".format(str(ratio)))
 
         width, height = image.size
         width = int(width * ratio)
         height = int(height * ratio)
         image = image.resize((width, height))
         image.save(outfile, 'PNG')
+
+        if len(outputs['Inverse Scale Ratio']) > 0:
+            inverse = 1 / ratio
+            with open(outputs['Inverse Scale Ratio'][0]['resource_path'], 'w') as f:
+                f.write(str(inverse))
 
     def test_my_task(self, testcase):
         pass
