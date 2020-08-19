@@ -4,8 +4,9 @@ from rodan.jobs.base import RodanTask
 
 
 IDEAL_SSH_PX = 64.   # SSH from old Salzinnes images
-Image.MAX_IMAGE_PIXELS = 1000000000 # We have to deal with very large images, but keep some decompression bomb protection
-
+# We have to deal with very large images
+# but keep some decompression bomb protection
+Image.MAX_IMAGE_PIXELS = 1000000000
 
 logger = get_task_logger(__name__)
 
@@ -28,7 +29,11 @@ class resize(RodanTask):
                 'enum': ['Staff Scale Height', 'Ratio'],
                 'type': 'string',
                 'default': 'Ratio',
-                'description': 'The way to interpret the provided value. If staff size height, then scale the image such that it meets an ideal staff size height for layer training and classification. If a ratio, scale by that ratio (i.e. 0.5 reduces dimensions by half).'
+                'description': 'The way to interpret the provided value. If ' +
+                        'staff size height, then scale the image such that' +
+                        ' meets an ideal staff size height for layer train' +
+                        'ing and it classification. If a ratio, scale by' +
+                        ' that ratio (i.e. 0.5 reduces dimensions by half.)'
             }
         },
         'job_queue': 'Python2',
@@ -38,11 +43,25 @@ class resize(RodanTask):
     interactive = False
 
     input_port_types = [
-        {'name': 'Image', 'minimum': 1, 'maximum': 1, 'resource_types': lambda mime: mime.startswith('image/')}
+        {
+            'name': 'Image',
+            'minimum': 1,
+            'maximum': 1,
+            'resource_types': lambda mime: mime.startswith('image/')
+        }
     ]
     output_port_types = [
-        {'name': 'Resized PNG Image', 'minimum': 1, 'maximum': 1, 'resource_types': ['image/rgb+png']},
-        {'name': 'Inverse Scale Ratio', 'minimum': 0, 'maximum': 1, 'resource_types': ['text/plain']},
+        {
+            'name': 'Resized PNG Image',
+            'minimum': 1, 'maximum': 1,
+            'resource_types': ['image/rgb+png']
+        },
+        {
+            'name': 'Inverse Scale Ratio',
+            'minimum': 0,
+            'maximum': 1,
+            'resource_types': ['text/plain']
+        },
     ]
 
     def run_my_task(self, inputs, settings, outputs):
@@ -51,7 +70,8 @@ class resize(RodanTask):
 
         image = Image.open(infile)
         logger.info(settings['Action'])
-        if self.settings['properties']['Action']['enum'][settings['Action']] != 'Ratio':
+        enumlist = self.settings['properties']['Action']['enum']
+        if enumlist[settings['Action']] != 'Ratio':
             ratio = IDEAL_SSH_PX / float(settings['Scale Value'])
         else:
             ratio = settings['Scale Value']
@@ -64,9 +84,10 @@ class resize(RodanTask):
         image = image.resize((width, height))
         image.save(outfile, 'PNG')
 
-        if len(outputs['Inverse Scale Ratio']) > 0:
+        if 'Inverse Scale Ratio' in outputs:
             inverse = 1 / ratio
-            with open(outputs['Inverse Scale Ratio'][0]['resource_path'], 'w') as f:
+            scalepath = outputs['Inverse Scale Ratio'][0]['resource_path']
+            with open(scalepath, 'w') as f:
                 f.write(str(inverse))
 
     def test_my_task(self, testcase):
