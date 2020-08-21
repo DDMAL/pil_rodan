@@ -36,7 +36,7 @@ class resize(RodanTask):
                         ' that ratio (i.e. 0.5 reduces dimensions by half.)'
             }
         },
-        'job_queue': 'Python2',
+        'job_queue': 'Python3',
     }
     enabled = True
     category = 'PIL - Manipulation'
