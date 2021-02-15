@@ -20,9 +20,7 @@ class to_jpeg2000(RodanTask):
     name = 'JPEG2000'
     author = 'Andrew Hankinson'
     description = "Converts an image to a JPEG2000 image suitable for display in Diva"
-    settings = {
-        'job_queue': 'celery'
-    }
+    settings = {'job_queue': 'celery'}
     enabled = True
     category = "PIL - Conversion"
     interactive = False
@@ -44,7 +42,7 @@ class to_jpeg2000(RodanTask):
             name, ext = os.path.splitext(name)
             tfile = os.path.join(tdir, "{0}.tiff".format(name))
 
-            subprocess.check_call([BIN_GM,
+            subprocess.check_call(args=[BIN_GM,
                                    'convert',
                                    "-depth", "8",         # output RGB
                                    "-compress", "None",
@@ -53,20 +51,34 @@ class to_jpeg2000(RodanTask):
             result_file = "{0}.jp2".format(name)
             output_file = os.path.join(tdir, result_file)
 
+            subprocess.check_call(
+                args=[
+                    # With Kakadu
+                    BIN_KDU_COMPRESS,
+                    "-i", tfile,
+                    "-o", output_file,
+                    "-quiet",
+                    "Clevels=5",
+                    "Cblk={64,64}",
+                    "Cprecincts={256,256},{256,256},{128,128}",
+                    "Creversible=yes",
+                    "Cuse_sop=yes",
+                    "Corder=LRCP",
+                    "ORGgen_plt=yes",
+                    "ORGtparts=R",
+                    "-rate", "-,1,0.5,0.25"
 
-            subprocess.check_call([BIN_KDU_COMPRESS,
-                                   "-i", tfile,
-                                   "-o", output_file,
-                                   "-quiet",
-                                   "Clevels=5",
-                                   "Cblk={64,64}",
-                                   "Cprecincts={256,256},{256,256},{128,128}",
-                                   "Creversible=yes",
-                                   "Cuse_sop=yes",
-                                   "Corder=LRCP",
-                                   "ORGgen_plt=yes",
-                                   "ORGtparts=R",
-                                   "-rate", "-,1,0.5,0.25"])
+                    # # With Grok
+                    # "/opt/grok/build/bin/grk_compress",
+                    # "-i", tfile,
+                    # "-o", output_file,
+                    # "-n", "5",
+                    # "-c", "[256,256],[256,256],[128,128]",
+                    # "-SOP",
+                    # "-p", "LRCP",
+                    # "-r","16,8,4,2"
+                ]
+            )
 
             shutil.copyfile(output_file, outputs['JPEG2000 Image'][0]['resource_path'])
 
