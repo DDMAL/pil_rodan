@@ -5,7 +5,7 @@ class RedFilter(RodanTask):
     name = "Red filtering"
     author = "Rivu Khoda & Yihong Luo"
     description = "Filters a spectrum of red color from image" 
-    settings = {} 
+    settings = {'job_queue': 'Python3'}
     enabled = True
     category = "PIL - Filter"
     interactive = False
@@ -47,8 +47,4 @@ class RedFilter(RodanTask):
         staff = enh_red_layer.point(lambda i: i < 255 and 255).convert('1')
          
         staff.save(outputs['Neumeless Image'][0]['resource_path'], "PNG")
-
-
-
-
 

@@ -6,7 +6,7 @@ class to_png(RodanTask):
     name = 'PNG (RGB)'
     author = 'Andrew Hankinson'
     description = 'Convert image to png format'
-    settings = {}
+    settings = {'job_queue': 'Python3'}
     enabled = True
     category = "PIL - Conversion"
     interactive = False
@@ -36,7 +36,7 @@ class to_png(RodanTask):
                 }
             ]
         }
-        PIL.Image.new("RGBA", size=(50, 50), color=(256, 0, 0)).save(inputs['in'][0]['resource_path'], 'JPEG')
+        PIL.Image.new("RGB", size=(50, 50), color=(256, 0, 0)).save(inputs['in'][0]['resource_path'], 'JPEG')
         outputs = {
             'out': [
                 {'resource_type': 'image/rgb+png',
